@@ -4,8 +4,9 @@ import './App.css';
 
 const WORK_TIME = 10//25*60
 const BREAK_TIME = 10//5*60
+const PREP_TIME = 30;
 
-type Phase = 'WORK' | 'BREAK';
+type Phase = 'WORK' | 'BREAK' | 'PREP';
 
 const playAcidAlarm = () => {
   const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -67,17 +68,31 @@ function App() {
     else if (isRunning && time == 0) {
       playAcidAlarm();
 
-      const nextPhase = phase === 'WORK' ? 'BREAK' : 'WORK';
-      
-      sendNotification({
-        title: nextPhase === 'BREAK' ? '集中フェーズ完了' : '休憩終了',
-        body: nextPhase === 'BREAK'
-          ? 'お疲れ様。アシッドな響きと共に5分の休憩に入りなさい。'
-          : '現実に戻る時間ね。次の25分を始めましょう。'
-      })
+      let nextPhase: Phase;
+      let nextTime: number;
+      let notifTitle = '';
+      let notifBody = '';
 
+      if (phase === 'WORK') {
+        nextPhase = 'BREAK';
+        nextTime = BREAK_TIME;
+        notifTitle = '集中フェーズ完了';
+        notifBody = 'お疲れ様。アシッドな響きと共に5分の休憩に入りなさい。';
+      } else if (phase == 'BREAK') {
+        nextPhase = 'PREP';
+        nextTime = PREP_TIME;
+        notifTitle = '休憩終了';
+        notifBody = '次の作業まであと30秒。姿勢を正し、準備を整えなさい。';
+      } else {
+        nextPhase = 'WORK';
+        nextTime = WORK_TIME;
+        notifTitle = '準備完了';
+        notifBody = '現実に戻る時間ね。次の25分を始めましょう。';
+      }
+      
+      sendNotification({ title: notifTitle, body: notifBody });
       setPhase(nextPhase);
-      setTime(nextPhase === 'WORK' ? WORK_TIME : BREAK_TIME);
+      setTime(nextTime);
     }
 
     return () => clearInterval(interval);
@@ -92,10 +107,22 @@ function App() {
     setTime(WORK_TIME)
   }
 
+  const phaseText = {
+    WORK: '集中フェーズ',
+    BREAK: '休憩フェーズ',
+    PREP: '準備フェーズ'
+  };
+
+  const phaseColor = {
+    WORK: '#ff6b6b',
+    BREAK: '#4ecdc4',
+    PREP: '#feca57'
+  };
+
   return (
     <div style={{ textAlign: 'center', marginTop: '40px' }}>
-      <h2 style={{ color: phase === 'WORK' ? '#ff6b6b' : '#4ecdc4'}}>
-        {phase === 'WORK' ? '集中フェーズ' : '休憩フェーズ'}
+      <h2 style={{ color: phaseColor[phase]}}>
+        {phaseText[phase]}
       </h2>
       <h1 style={{ fontSize: '4rem', fontFamily: 'monospace' }}>
         {format(time)}
