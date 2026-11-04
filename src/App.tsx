@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/plugin-notification';
 import './App.css';
 
-const WORK_TIME = 10//25*60
-const BREAK_TIME = 10//5*60
+const WORK_TIME = 25*60
+const BREAK_TIME = 5*60
 const PREP_TIME = 30;
 
 type Phase = 'WORK' | 'BREAK' | 'PREP';
@@ -58,6 +58,30 @@ function App() {
     };
     initNotification();
   }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        setIsRunning((prev) => !prev);
+      }
+      
+      if (isRunning) return;
+
+      if (/^[0-9]$/.test(e.key)) {
+        const digit = parseInt(e.key, 10);
+        setTime((prev) => prev*10 + digit);
+      }
+
+      if (e.key === 'Backspace') {
+        setTime((prev) => Math.floor(prev / 10));
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isRunning]);
 
   useEffect(() => {
     let interval: number | undefined;
