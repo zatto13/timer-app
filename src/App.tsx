@@ -144,15 +144,19 @@ function App() {
   };
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '40px' }}>
-      <h2 style={{ color: phaseColor[phase]}}>
-        {phaseText[phase]}
-      </h2>
-      <h1 style={{ fontSize: '4rem', fontFamily: 'monospace' }}>
-        {format(time)}
-      </h1>
-      <div style={{ marginTop: '20px' }}>
-        <button onClick={() => setIsRunning(!isRunning)} style={{ marginRight: '10px' }}>
+    <div style={{ textAlign: 'center' }}>
+      {/* 凹みパネルの中にフェーズ表示と時間を両方閉じ込める構成 */}
+      <div className="timer-display" style={{ flexDirection: 'column' }}>
+        <h2 className="phase-title" style={{ color: phaseColor[phase], marginBottom: '10px' }}>
+          {phaseText[phase]}
+        </h2>
+        <div>
+          {format(time)}
+        </div>
+      </div>
+      <div className="button-group">
+        {/* ボタン側の marginRight 指定も消してスッキリさせるわ */}
+        <button onClick={() => setIsRunning(!isRunning)}>
           {isRunning ? 'Pause' : 'Start'}
         </button>
         <button onClick={handleReset}>

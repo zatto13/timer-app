@@ -14,8 +14,10 @@
       {
         "title": "Timer",
         "width": 300,
-        "height": 250,
-        "alwaysOnTop": true
+        "height": 300,
+        "alwaysOnTop": true,
+        "theme": "Dark",
+        "backgroundColor": [30, 30, 46, 255]
       }
     ],
     "security": {
