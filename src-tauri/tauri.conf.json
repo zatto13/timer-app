@@ -17,7 +17,10 @@
         "height": 300,
         "alwaysOnTop": true,
         "theme": "Dark",
-        "backgroundColor": [30, 30, 46, 255]
+        "backgroundColor": [30, 30, 46, 255],
+        "resizable": true,
+        "maximizable": false,
+        "fullscreen": false
       }
     ],
     "security": {
